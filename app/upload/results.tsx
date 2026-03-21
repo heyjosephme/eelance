@@ -14,6 +14,7 @@ import {
 import { getPosition } from "@/lib/data/positions"
 import type { ExtractedProfile, MatchedPosition } from "@/lib/data/mock-resume-result"
 import { type ScoreBreakdown, scorePositionForEngineer } from "@/lib/scoring"
+import { addTrackedApplication } from "@/lib/application-store"
 
 function ScoreBar({ dimension }: { dimension: ScoreBreakdown["dimensions"][number] }) {
   const pct = (dimension.score / dimension.maxScore) * 100
@@ -55,14 +56,32 @@ export function Results({
   const [allSent, setAllSent] = useState(false)
   const [expandedId, setExpandedId] = useState<string | null>(null)
 
+  function saveToTracker(positionId: string, score: number) {
+    const pos = getPosition(positionId)
+    if (!pos) return
+    addTrackedApplication({
+      positionId,
+      positionTitle: pos.title,
+      company: pos.company,
+      location: pos.location,
+      stack: pos.stack,
+      score,
+      appliedAt: new Date().toISOString(),
+    })
+  }
+
   function applyTo(positionId: string) {
     setAppliedIds((prev) => new Set(prev).add(positionId))
+    const scored = scoredMatches.find((s) => s.match.positionId === positionId)
+    saveToTracker(positionId, scored?.breakdown?.total ?? 0)
   }
 
   async function applyToAll() {
     for (const match of matches) {
       await new Promise((r) => setTimeout(r, 400))
       setAppliedIds((prev) => new Set(prev).add(match.positionId))
+      const scored = scoredMatches.find((s) => s.match.positionId === match.positionId)
+      saveToTracker(match.positionId, scored?.breakdown?.total ?? 0)
     }
     setAllSent(true)
   }
@@ -139,6 +158,15 @@ export function Results({
           <p className="mt-1 text-sm text-teal-700/80">
             We&apos;ll arrange interviews and notify you. Sit back and relax.
           </p>
+          <Link
+            href="/applications"
+            className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-lg bg-teal-600 px-4 text-sm font-medium text-white shadow-sm shadow-teal-600/20 transition-all hover:bg-teal-500"
+          >
+            Track My Applications
+            <svg className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </Link>
         </div>
       )}
 

@@ -59,6 +59,12 @@ export default function RootLayout({
                 Positions
               </Link>
               <Link
+                href="/applications"
+                className="rounded-md px-3 py-1.5 text-[13px] text-zinc-400 transition-colors hover:bg-white/[0.06] hover:text-white"
+              >
+                My Applications
+              </Link>
+              <Link
                 href="/upload"
                 className="ml-2 inline-flex h-8 items-center rounded-md bg-teal-500 px-3.5 text-[13px] font-medium text-white shadow-sm shadow-teal-500/25 transition-all hover:bg-teal-400 hover:shadow-md hover:shadow-teal-500/30"
               >
