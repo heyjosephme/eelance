@@ -34,12 +34,20 @@ export default function RootLayout({
             <Link href="/" className="text-lg font-bold tracking-tight">
               eelance
             </Link>
-            <Link
-              href="/upload"
-              className="inline-flex h-8 items-center rounded-md bg-teal-500 px-3 text-sm font-medium text-white transition-colors hover:bg-teal-400"
-            >
-              Get Started
-            </Link>
+            <div className="flex items-center gap-4">
+              <Link
+                href="/company"
+                className="text-sm text-zinc-400 transition-colors hover:text-white"
+              >
+                For Companies
+              </Link>
+              <Link
+                href="/upload"
+                className="inline-flex h-8 items-center rounded-md bg-teal-500 px-3 text-sm font-medium text-white transition-colors hover:bg-teal-400"
+              >
+                Get Started
+              </Link>
+            </div>
           </nav>
         </header>
         <main className="flex flex-1 flex-col">{children}</main>
