@@ -59,12 +59,53 @@ export const engineers: EngineerProfile[] = [
     rateMax: 950000,
     bio: "5 years in SRE. Built CI/CD for 50+ microservices at Rakuten. On-call veteran.",
   },
+  {
+    id: "e5",
+    name: "Ito Takeshi",
+    title: "Full-Stack Engineer",
+    yearsOfExperience: 5,
+    skills: ["React", "Next.js", "TypeScript", "Python", "AWS", "Docker"],
+    rateMin: 650000,
+    rateMax: 850000,
+    bio: "5 years building SaaS products. FastAPI + React stack. Ex-SmartHR.",
+  },
+  {
+    id: "e6",
+    name: "Watanabe Aoi",
+    title: "Mobile Engineer",
+    yearsOfExperience: 5,
+    skills: ["Swift", "SwiftUI", "React Native", "TypeScript", "GraphQL"],
+    rateMin: 700000,
+    rateMax: 900000,
+    bio: "5 years in mobile. Built fintech apps with 1M+ downloads. Loves SwiftUI.",
+  },
+  {
+    id: "e7",
+    name: "Nakamura Yui",
+    title: "Cloud Engineer",
+    yearsOfExperience: 4,
+    skills: ["AWS", "GCP", "Kubernetes", "Terraform", "Python", "Ansible"],
+    rateMin: 650000,
+    rateMax: 850000,
+    bio: "4 years in cloud infra. Multi-cloud migration specialist. GCP certified.",
+  },
+  {
+    id: "e8",
+    name: "Morimoto Sakura",
+    title: "iOS Engineer",
+    yearsOfExperience: 6,
+    skills: ["Swift", "SwiftUI", "UIKit", "Core Data", "CI/CD", "GraphQL"],
+    rateMin: 750000,
+    rateMax: 950000,
+    bio: "6 years iOS development. Built banking and e-commerce apps. WWDC scholar.",
+  },
 ]
 
 export const applications: Application[] = [
+  // Position 1: Senior React/Next.js Engineer @ TechCorp Japan
   {
     id: "a1",
-    positionId: "1", // Senior React/Next.js Engineer at TechCorp
+    positionId: "1",
     engineer: engineers[0], // Tanaka Yuki
     status: "pending",
     matchScore: 95,
@@ -79,16 +120,28 @@ export const applications: Application[] = [
     appliedAt: "2026-03-19",
   },
   {
+    id: "a6",
+    positionId: "1",
+    engineer: engineers[4], // Ito Takeshi
+    status: "pending",
+    matchScore: 88,
+    appliedAt: "2026-03-18",
+  },
+
+  // Position 2: Backend Engineer (Go) @ StartupXYZ
+  {
     id: "a3",
-    positionId: "2", // Backend Engineer (Go) at StartupXYZ
+    positionId: "2",
     engineer: engineers[1], // Suzuki Hana
     status: "pending",
     matchScore: 92,
     appliedAt: "2026-03-20",
   },
+
+  // Position 7: DevOps/SRE @ CloudNative Corp
   {
     id: "a4",
-    positionId: "7", // DevOps/SRE at CloudNative
+    positionId: "7",
     engineer: engineers[3], // Sato Mei
     status: "pending",
     matchScore: 88,
@@ -101,6 +154,40 @@ export const applications: Application[] = [
     status: "pending",
     matchScore: 76,
     appliedAt: "2026-03-18",
+  },
+  {
+    id: "a7",
+    positionId: "7",
+    engineer: engineers[6], // Nakamura Yui
+    status: "pending",
+    matchScore: 80,
+    appliedAt: "2026-03-17",
+  },
+
+  // Position 8: iOS Engineer (Swift) @ TechCorp Japan
+  {
+    id: "a8",
+    positionId: "8",
+    engineer: engineers[5], // Watanabe Aoi
+    status: "pending",
+    matchScore: 90,
+    appliedAt: "2026-03-20",
+  },
+  {
+    id: "a9",
+    positionId: "8",
+    engineer: engineers[7], // Morimoto Sakura
+    status: "pending",
+    matchScore: 94,
+    appliedAt: "2026-03-19",
+  },
+  {
+    id: "a10",
+    positionId: "8",
+    engineer: engineers[2], // Yamamoto Ren
+    status: "pending",
+    matchScore: 45,
+    appliedAt: "2026-03-17",
   },
 ]
 
