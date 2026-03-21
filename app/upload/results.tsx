@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -170,7 +171,12 @@ export function Results({
 
                   {/* Info */}
                   <div className="flex-1">
-                    <p className="font-medium">{position.title}</p>
+                    <Link
+                      href={`/positions/${position.id}`}
+                      className="font-medium hover:text-teal-600 hover:underline"
+                    >
+                      {position.title}
+                    </Link>
                     <p className="text-sm text-muted-foreground">
                       {position.company} &middot; {position.location}
                     </p>

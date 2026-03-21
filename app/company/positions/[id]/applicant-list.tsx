@@ -1,11 +1,13 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import type { Application } from "@/lib/data/applications"
 import { engineers } from "@/lib/data/applications"
+import { engineerListings } from "@/lib/data/engineer-listings"
 import type { Position } from "@/lib/data/positions"
 import { type ScoreBreakdown, scoreEngineerForPosition } from "@/lib/scoring"
 
@@ -108,7 +110,21 @@ export function ApplicantList({
                 {/* Engineer info */}
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <p className="font-medium">{app.engineer.name}</p>
+                    {(() => {
+                      const listing = engineerListings.find(
+                        (el) => el.name === app.engineer.name
+                      )
+                      return listing ? (
+                        <Link
+                          href={`/engineers/${listing.id}`}
+                          className="font-medium hover:text-teal-600 hover:underline"
+                        >
+                          {app.engineer.name}
+                        </Link>
+                      ) : (
+                        <p className="font-medium">{app.engineer.name}</p>
+                      )
+                    })()}
                     <span className="text-sm text-muted-foreground">
                       {app.engineer.title} &middot;{" "}
                       {app.engineer.yearsOfExperience}y exp

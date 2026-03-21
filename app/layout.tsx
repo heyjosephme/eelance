@@ -36,6 +36,12 @@ export default function RootLayout({
             </Link>
             <div className="flex items-center gap-4">
               <Link
+                href="/engineers"
+                className="text-sm text-zinc-400 transition-colors hover:text-white"
+              >
+                Engineers
+              </Link>
+              <Link
                 href="/company"
                 className="text-sm text-zinc-400 transition-colors hover:text-white"
               >
