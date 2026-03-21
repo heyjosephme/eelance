@@ -59,10 +59,10 @@ export default function RootLayout({
                 Positions
               </Link>
               <Link
-                href="/applications"
+                href="/dashboard"
                 className="rounded-md px-3 py-1.5 text-[13px] text-zinc-400 transition-colors hover:bg-white/[0.06] hover:text-white"
               >
-                My Applications
+                Dashboard
               </Link>
               <Link
                 href="/upload"

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -15,6 +15,7 @@ import { getPosition } from "@/lib/data/positions"
 import type { ExtractedProfile, MatchedPosition } from "@/lib/data/mock-resume-result"
 import { type ScoreBreakdown, scorePositionForEngineer } from "@/lib/scoring"
 import { addTrackedApplication } from "@/lib/application-store"
+import { saveProfile } from "@/lib/profile-store"
 
 function ScoreBar({ dimension }: { dimension: ScoreBreakdown["dimensions"][number] }) {
   const pct = (dimension.score / dimension.maxScore) * 100
@@ -55,6 +56,11 @@ export function Results({
   const [appliedIds, setAppliedIds] = useState<Set<string>>(new Set())
   const [allSent, setAllSent] = useState(false)
   const [expandedId, setExpandedId] = useState<string | null>(null)
+
+  // Save profile to localStorage on mount
+  useEffect(() => {
+    saveProfile(profile)
+  }, [profile])
 
   function saveToTracker(positionId: string, score: number) {
     const pos = getPosition(positionId)
@@ -158,15 +164,23 @@ export function Results({
           <p className="mt-1 text-sm text-teal-700/80">
             We&apos;ll arrange interviews and notify you. Sit back and relax.
           </p>
-          <Link
-            href="/applications"
-            className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-lg bg-teal-600 px-4 text-sm font-medium text-white shadow-sm shadow-teal-600/20 transition-all hover:bg-teal-500"
-          >
-            Track My Applications
-            <svg className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </Link>
+          <div className="mt-3 flex items-center gap-2">
+            <Link
+              href="/dashboard"
+              className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-teal-600 px-4 text-sm font-medium text-white shadow-sm shadow-teal-600/20 transition-all hover:bg-teal-500"
+            >
+              Go to Dashboard
+              <svg className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </Link>
+            <Link
+              href="/applications"
+              className="inline-flex h-9 items-center rounded-lg border border-border px-4 text-sm font-medium transition-all hover:border-teal-500 hover:text-teal-600"
+            >
+              Track Applications
+            </Link>
+          </div>
         </div>
       )}
 
