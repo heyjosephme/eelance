@@ -8,7 +8,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import type { Application } from "@/lib/data/applications"
 import { engineers } from "@/lib/data/applications"
-import { engineerListings } from "@/lib/data/engineer-listings"
 import type { Position } from "@/lib/data/positions"
 import { type ScoreBreakdown, scoreEngineerForPosition } from "@/lib/scoring"
 
@@ -97,10 +96,6 @@ export function ApplicantList({
         const isScheduling = scheduling === app.id
         const expanded = expandedId === app.id
 
-        const listing = engineerListings.find(
-          (el) => el.name === app.engineer.name
-        )
-
         return (
           <Card
             key={app.id}
@@ -160,16 +155,12 @@ export function ApplicantList({
                     <div className="flex size-7 items-center justify-center rounded-full bg-zinc-100 text-[10px] font-semibold text-zinc-600">
                       {app.engineer.name.charAt(0)}
                     </div>
-                    {listing ? (
-                      <Link
-                        href={`/engineers/${listing.id}`}
-                        className="text-sm font-semibold transition-colors hover:text-teal-600"
-                      >
-                        {app.engineer.name}
-                      </Link>
-                    ) : (
-                      <p className="text-sm font-semibold">{app.engineer.name}</p>
-                    )}
+                    <Link
+                      href={`/company/positions/${position.id}/applicants/${app.id}`}
+                      className="text-sm font-semibold transition-colors hover:text-teal-600"
+                    >
+                      {app.engineer.name}
+                    </Link>
                     <span className="hidden text-xs text-muted-foreground sm:inline">
                       {app.engineer.title} &middot; {app.engineer.yearsOfExperience}y exp
                     </span>
