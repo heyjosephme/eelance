@@ -1,59 +1,42 @@
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { positions } from "@/lib/data/positions"
-import { PositionCard } from "./positions/position-card"
 
 export default function Home() {
-  const featured = positions.slice(0, 3)
-
   return (
-    <div className="flex flex-1 flex-col">
-      {/* Hero */}
-      <section className="bg-zinc-900 text-white">
-        <div className="mx-auto max-w-5xl px-6 py-24">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-            Freelance IT jobs
-            <br />
-            <span className="text-teal-400">matched to your skills</span>
-          </h1>
-          <p className="mt-4 max-w-xl text-lg text-zinc-400">
-            Upload your resume and let AI find the best freelance and contract
-            positions for you. No more scrolling through irrelevant listings.
-          </p>
-          <div className="mt-8 flex gap-3">
-            <Link
-              href="/upload"
-              className="inline-flex h-9 items-center rounded-lg bg-teal-500 px-4 text-sm font-medium text-white transition-colors hover:bg-teal-400"
-            >
-              Upload Resume
-            </Link>
-            <Link
-              href="/positions"
-              className="inline-flex h-9 items-center rounded-lg border border-zinc-600 px-4 text-sm font-medium text-zinc-300 transition-colors hover:border-zinc-400 hover:text-white"
-            >
-              Browse Positions
-            </Link>
+    <div className="flex flex-1 flex-col items-center justify-center bg-zinc-900 text-white">
+      <div className="mx-auto max-w-2xl px-6 py-24 text-center">
+        <p className="text-sm font-medium uppercase tracking-widest text-teal-400">
+          AI-Powered Matching
+        </p>
+        <h1 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">
+          Drop your resume.
+          <br />
+          We handle the rest.
+        </h1>
+        <p className="mx-auto mt-4 max-w-md text-lg text-zinc-400">
+          Our AI reads your resume, finds the best freelance IT positions for
+          you, and applies on your behalf. One click.
+        </p>
+        <Link
+          href="/upload"
+          className="mt-8 inline-flex h-11 items-center rounded-lg bg-teal-500 px-6 text-base font-medium text-white transition-colors hover:bg-teal-400"
+        >
+          Upload Resume
+        </Link>
+        <div className="mt-16 grid grid-cols-3 gap-8 text-center">
+          <div>
+            <p className="text-3xl font-bold text-teal-400">1</p>
+            <p className="mt-1 text-sm text-zinc-400">Upload resume</p>
+          </div>
+          <div>
+            <p className="text-3xl font-bold text-teal-400">2</p>
+            <p className="mt-1 text-sm text-zinc-400">Review AI matches</p>
+          </div>
+          <div>
+            <p className="text-3xl font-bold text-teal-400">3</p>
+            <p className="mt-1 text-sm text-zinc-400">We arrange interviews</p>
           </div>
         </div>
-      </section>
-
-      {/* Featured positions */}
-      <section className="mx-auto w-full max-w-5xl px-6 py-16">
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-semibold">Featured Positions</h2>
-          <Link
-            href="/positions"
-            className="text-sm font-medium text-muted-foreground hover:text-foreground"
-          >
-            View all &rarr;
-          </Link>
-        </div>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {featured.map((position) => (
-            <PositionCard key={position.id} position={position} />
-          ))}
-        </div>
-      </section>
+      </div>
     </div>
   )
 }

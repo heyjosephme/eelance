@@ -29,22 +29,17 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <header className="border-b bg-zinc-900 text-white">
+        <header className="border-b border-zinc-800 bg-zinc-900 text-white">
           <nav className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
             <Link href="/" className="text-lg font-bold tracking-tight">
               eelance
             </Link>
-            <div className="flex items-center gap-6 text-sm">
-              <Link
-                href="/positions"
-                className="text-zinc-400 hover:text-white"
-              >
-                Positions
-              </Link>
-              <Link href="/upload" className="text-zinc-400 hover:text-white">
-                Upload Resume
-              </Link>
-            </div>
+            <Link
+              href="/upload"
+              className="inline-flex h-8 items-center rounded-md bg-teal-500 px-3 text-sm font-medium text-white transition-colors hover:bg-teal-400"
+            >
+              Get Started
+            </Link>
           </nav>
         </header>
         <main className="flex flex-1 flex-col">{children}</main>
