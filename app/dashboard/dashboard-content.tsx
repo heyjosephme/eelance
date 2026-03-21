@@ -18,6 +18,7 @@ import {
   getTrackedApplications,
   type TrackedApplication,
 } from "@/lib/application-store"
+import { initRevenueCat, checkProEntitlement } from "@/lib/revenuecat"
 import { PaywallModal } from "./paywall-modal"
 
 function scoreColor(score: number) {
@@ -77,21 +78,31 @@ export function DashboardContent() {
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
-    const profile = getSavedProfile()
-    const sub = getSubscription()
-    const apps = getTrackedApplications()
+    async function init() {
+      // Initialize RevenueCat SDK
+      initRevenueCat()
 
-    setSaved(profile)
-    setSubscriptionState(sub)
-    setApplications(apps)
+      const profile = getSavedProfile()
+      const apps = getTrackedApplications()
 
-    if (profile) {
-      const appliedIds = new Set(apps.map((a) => a.positionId))
-      const recs = generateMatches(profile.profile, appliedIds, 3)
-      setRecommendations(recs)
+      setSaved(profile)
+      setApplications(apps)
+
+      // Check subscription: real entitlement first, then localStorage fallback
+      const hasEntitlement = await checkProEntitlement()
+      const localSub = getSubscription()
+      const sub = hasEntitlement ? "pro" : localSub
+      setSubscriptionState(sub)
+
+      if (profile) {
+        const appliedIds = new Set(apps.map((a) => a.positionId))
+        const recs = generateMatches(profile.profile, appliedIds, 3)
+        setRecommendations(recs)
+      }
+
+      setLoaded(true)
     }
-
-    setLoaded(true)
+    init()
   }, [])
 
   async function handleSuggestMore() {
