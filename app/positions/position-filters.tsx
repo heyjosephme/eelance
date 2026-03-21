@@ -31,17 +31,17 @@ export function PositionFilters({
   }
 
   return (
-    <div className="mt-4 flex flex-wrap gap-3">
+    <div className="animate-fade-in-up stagger-1 mt-6 flex flex-wrap gap-3">
       <Input
         placeholder="Filter by stack (e.g. React, Go)"
         defaultValue={stack}
-        className="max-w-xs"
+        className="max-w-xs shadow-sm"
         onChange={(e) => updateFilter("stack", e.target.value)}
       />
       <select
         defaultValue={location ?? ""}
         onChange={(e) => updateFilter("location", e.target.value)}
-        className="h-9 rounded-lg border border-input bg-background px-3 text-sm"
+        className="h-9 rounded-lg border border-input bg-card px-3 text-sm shadow-sm outline-none transition-colors focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20"
       >
         {locations.map((loc) => (
           <option key={loc.value} value={loc.value}>

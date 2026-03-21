@@ -24,7 +24,7 @@ const steps: ChatStep[] = [
   },
   {
     id: "experience",
-    question: "How many years of professional experience do you have?",
+    question: "How many years of professional experience?",
     placeholder: "e.g. 5",
     options: ["1-2", "3-5", "5-8", "8+"],
   },
@@ -42,7 +42,7 @@ const steps: ChatStep[] = [
   },
   {
     id: "rate",
-    question: "What's your expected monthly rate range (万円)?",
+    question: "Expected monthly rate range (万円)?",
     placeholder: "e.g. 60-80",
     options: ["40-60", "60-80", "80-100", "100+"],
   },
@@ -63,7 +63,7 @@ export function ChatIntake({
   const [messages, setMessages] = useState<Message[]>([
     {
       from: "ai",
-      text: "Hi! I'll help you find the best freelance positions. Let me ask a few quick questions.",
+      text: "Hi! I'll help you find the best freelance positions. A few quick questions.",
     },
   ])
   const [input, setInput] = useState("")
@@ -71,7 +71,6 @@ export function ChatIntake({
   const [showQuestion, setShowQuestion] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
-  // Show first question after greeting
   useEffect(() => {
     const timer = setTimeout(() => {
       setMessages((prev) => [
@@ -90,12 +89,10 @@ export function ChatIntake({
   async function handleAnswer(answer: string) {
     if (!answer.trim()) return
 
-    // Store the answer keyed by step id
     const stepId = steps[currentStep].id
     const newAnswers = { ...answers, [stepId]: answer }
     setAnswers(newAnswers)
 
-    // Add user message
     setMessages((prev) => [...prev, { from: "user", text: answer }])
     setInput("")
     setShowQuestion(false)
@@ -104,7 +101,7 @@ export function ChatIntake({
 
     if (nextStep < steps.length) {
       setThinking(true)
-      await new Promise((r) => setTimeout(r, 600))
+      await new Promise((r) => setTimeout(r, 500))
       setThinking(false)
       setMessages((prev) => [
         ...prev,
@@ -113,11 +110,10 @@ export function ChatIntake({
       setCurrentStep(nextStep)
       setShowQuestion(true)
     } else {
-      // All questions answered — build profile from answers
       setThinking(true)
       setMessages((prev) => [
         ...prev,
-        { from: "ai", text: "Great! Let me find the best positions for you..." },
+        { from: "ai", text: "Perfect — finding the best positions for you..." },
       ])
       await new Promise((r) => setTimeout(r, 2000))
       setThinking(false)
@@ -141,21 +137,36 @@ export function ChatIntake({
   }
 
   const step = steps[currentStep]
+  const progress = ((currentStep + 1) / steps.length) * 100
 
   return (
     <div className="flex flex-col">
+      {/* Progress bar */}
+      <div className="mb-6 h-1 w-full overflow-hidden rounded-full bg-zinc-100">
+        <div
+          className="h-full rounded-full bg-teal-500 transition-all duration-500 ease-out"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+
       {/* Chat messages */}
-      <div className="space-y-3 pb-4">
+      <div className="min-h-[300px] space-y-3 pb-4">
         {messages.map((msg, i) => (
           <div
             key={i}
-            className={`flex ${msg.from === "user" ? "justify-end" : "justify-start"}`}
+            className={`flex animate-fade-in-up ${msg.from === "user" ? "justify-end" : "justify-start"}`}
+            style={{ animationDelay: `${i * 0.05}s` }}
           >
+            {msg.from === "ai" && (
+              <div className="mr-2 flex size-7 shrink-0 items-center justify-center rounded-full bg-teal-500 text-[10px] font-bold text-white">
+                ee
+              </div>
+            )}
             <div
-              className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${
+              className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
                 msg.from === "user"
-                  ? "bg-teal-600 text-white"
-                  : "bg-zinc-100 text-zinc-900"
+                  ? "bg-[oklch(0.14_0.02_260)] text-white"
+                  : "bg-zinc-100 text-zinc-800"
               }`}
             >
               {msg.text}
@@ -163,13 +174,15 @@ export function ChatIntake({
           </div>
         ))}
 
-        {/* Typing indicator */}
         {thinking && (
-          <div className="flex justify-start">
-            <div className="flex gap-1 rounded-2xl bg-zinc-100 px-4 py-3">
-              <span className="size-2 animate-bounce rounded-full bg-zinc-400 [animation-delay:0ms]" />
-              <span className="size-2 animate-bounce rounded-full bg-zinc-400 [animation-delay:150ms]" />
-              <span className="size-2 animate-bounce rounded-full bg-zinc-400 [animation-delay:300ms]" />
+          <div className="flex animate-fade-in items-center gap-2">
+            <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-teal-500 text-[10px] font-bold text-white">
+              ee
+            </div>
+            <div className="flex gap-1.5 rounded-2xl bg-zinc-100 px-4 py-3">
+              <span className="size-1.5 rounded-full bg-zinc-400 animate-pulse-dot" />
+              <span className="size-1.5 rounded-full bg-zinc-400 animate-pulse-dot" style={{ animationDelay: "0.2s" }} />
+              <span className="size-1.5 rounded-full bg-zinc-400 animate-pulse-dot" style={{ animationDelay: "0.4s" }} />
             </div>
           </div>
         )}
@@ -177,9 +190,9 @@ export function ChatIntake({
         <div ref={bottomRef} />
       </div>
 
-      {/* Quick option buttons + text input */}
+      {/* Input area */}
       {showQuestion && step && (
-        <div className="border-t pt-4">
+        <div className="animate-fade-in-up border-t pt-4">
           {step.options && (
             <div className="mb-3 flex flex-wrap gap-2">
               {step.options.map((option) => (
@@ -187,7 +200,7 @@ export function ChatIntake({
                   key={option}
                   type="button"
                   onClick={() => handleAnswer(option)}
-                  className="rounded-full border border-zinc-200 bg-white px-3.5 py-1.5 text-sm font-medium transition-colors hover:border-teal-500 hover:bg-teal-50 hover:text-teal-700"
+                  className="rounded-full border border-border bg-card px-4 py-1.5 text-sm font-medium shadow-sm transition-all hover:border-teal-500/40 hover:bg-teal-50 hover:text-teal-700 hover:shadow-md hover:shadow-teal-500/5"
                 >
                   {option}
                 </button>
@@ -200,13 +213,13 @@ export function ChatIntake({
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={step.placeholder || "Type your answer..."}
-              className="flex-1 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+              className="flex-1 rounded-xl border border-border bg-card px-4 py-2.5 text-sm shadow-sm outline-none transition-colors focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20"
               autoFocus
             />
             <button
               type="submit"
               disabled={!input.trim()}
-              className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-teal-500 disabled:opacity-40"
+              className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-teal-500 hover:shadow-md disabled:opacity-30"
             >
               Send
             </button>

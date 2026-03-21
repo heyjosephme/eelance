@@ -29,27 +29,38 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <header className="border-b border-zinc-800 bg-zinc-900 text-white">
-          <nav className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
-            <Link href="/" className="text-lg font-bold tracking-tight">
-              eelance
+        <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[oklch(0.14_0.02_260)] backdrop-blur-xl">
+          <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
+            <Link href="/" className="flex items-center gap-2">
+              <div className="flex size-7 items-center justify-center rounded-md bg-teal-500 text-xs font-bold text-white">
+                ee
+              </div>
+              <span className="text-[15px] font-semibold tracking-tight text-white">
+                eelance
+              </span>
             </Link>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1">
               <Link
                 href="/engineers"
-                className="text-sm text-zinc-400 transition-colors hover:text-white"
+                className="rounded-md px-3 py-1.5 text-[13px] text-zinc-400 transition-colors hover:bg-white/[0.06] hover:text-white"
               >
                 Engineers
               </Link>
               <Link
                 href="/company"
-                className="text-sm text-zinc-400 transition-colors hover:text-white"
+                className="rounded-md px-3 py-1.5 text-[13px] text-zinc-400 transition-colors hover:bg-white/[0.06] hover:text-white"
               >
-                For Companies
+                Companies
+              </Link>
+              <Link
+                href="/positions"
+                className="rounded-md px-3 py-1.5 text-[13px] text-zinc-400 transition-colors hover:bg-white/[0.06] hover:text-white"
+              >
+                Positions
               </Link>
               <Link
                 href="/upload"
-                className="inline-flex h-8 items-center rounded-md bg-teal-500 px-3 text-sm font-medium text-white transition-colors hover:bg-teal-400"
+                className="ml-2 inline-flex h-8 items-center rounded-md bg-teal-500 px-3.5 text-[13px] font-medium text-white shadow-sm shadow-teal-500/25 transition-all hover:bg-teal-400 hover:shadow-md hover:shadow-teal-500/30"
               >
                 Get Started
               </Link>

@@ -16,24 +16,27 @@ function formatRate(rate: number) {
 export function PositionCard({ position }: { position: Position }) {
   return (
     <Link href={`/positions/${position.id}`}>
-      <Card className="h-full transition-colors hover:border-teal-500/50">
-        <CardHeader>
+      <Card className="h-full transition-all hover:border-teal-500/30 hover:shadow-md hover:shadow-zinc-200/50">
+        <CardHeader className="pb-3">
           <CardDescription className="text-xs">
-            {position.company} &middot; {position.location} &middot;{" "}
+            {position.company} &middot;{" "}
+            <span className="capitalize">{position.location}</span> &middot;{" "}
             {position.contractType}
           </CardDescription>
-          <CardTitle className="text-base">{position.title}</CardTitle>
+          <CardTitle className="text-sm leading-snug">
+            {position.title}
+          </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-1.5">
+        <CardContent className="space-y-3">
+          <div className="flex flex-wrap gap-1">
             {position.stack.map((tech) => (
-              <Badge key={tech} variant="secondary" className="text-xs">
+              <Badge key={tech} variant="secondary" className="text-[11px]">
                 {tech}
               </Badge>
             ))}
           </div>
-          <p className="mt-3 text-sm text-muted-foreground">
-            {formatRate(position.rateMin)} – {formatRate(position.rateMax)}/月
+          <p className="font-mono text-xs text-muted-foreground">
+            {formatRate(position.rateMin)}–{formatRate(position.rateMax)}/月
           </p>
         </CardContent>
       </Card>

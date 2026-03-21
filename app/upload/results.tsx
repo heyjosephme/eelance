@@ -18,21 +18,30 @@ import { type ScoreBreakdown, scorePositionForEngineer } from "@/lib/scoring"
 function ScoreBar({ dimension }: { dimension: ScoreBreakdown["dimensions"][number] }) {
   const pct = (dimension.score / dimension.maxScore) * 100
   return (
-    <div className="flex items-center gap-2 text-xs">
-      <span className="w-20 shrink-0 text-muted-foreground">
+    <div className="flex items-center gap-3 text-xs">
+      <span className="w-24 shrink-0 font-medium text-foreground">
         {dimension.name}
       </span>
-      <div className="h-1.5 flex-1 rounded-full bg-zinc-100">
+      <div className="h-2 flex-1 overflow-hidden rounded-full bg-zinc-100">
         <div
-          className="h-full rounded-full bg-teal-500"
-          style={{ width: `${pct}%` }}
+          className="h-full rounded-full animate-score-fill"
+          style={{
+            width: `${pct}%`,
+            backgroundColor: pct >= 80 ? "oklch(0.65 0.17 175)" : pct >= 50 ? "oklch(0.6 0.15 250)" : "oklch(0.6 0 0)",
+          }}
         />
       </div>
-      <span className="w-8 shrink-0 text-right tabular-nums text-muted-foreground">
+      <span className="w-10 shrink-0 text-right font-mono text-muted-foreground">
         {dimension.score}/{dimension.maxScore}
       </span>
     </div>
   )
+}
+
+function scoreColor(score: number) {
+  if (score >= 80) return "text-teal-600"
+  if (score >= 60) return "text-blue-600"
+  return "text-zinc-500"
 }
 
 export function Results({
@@ -61,14 +70,13 @@ export function Results({
   const allApplied =
     matches.length > 0 && matches.every((m) => appliedIds.has(m.positionId))
 
-  // Compute real scores for each match
   const scoredMatches = matches.map((match) => {
     const position = getPosition(match.positionId)
     if (!position) return { match, position: null, breakdown: null }
     const breakdown = scorePositionForEngineer(
       {
         skills: profile.skills,
-        rateMin: 600000, // fallback defaults
+        rateMin: 600000,
         rateMax: 1000000,
         location: "anywhere",
       },
@@ -80,7 +88,8 @@ export function Results({
   return (
     <div className="space-y-6">
       {/* Profile summary */}
-      <Card>
+      <Card className="animate-fade-in-up overflow-hidden">
+        <div className="h-1 bg-gradient-to-r from-teal-500 to-emerald-400" />
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">Welcome, {profile.name}</CardTitle>
           <CardDescription>
@@ -101,13 +110,16 @@ export function Results({
 
       {/* Apply all CTA */}
       {!allApplied && !allSent && (
-        <div className="rounded-lg bg-teal-50 p-4 text-center">
-          <p className="text-sm font-medium text-teal-900">
+        <div className="animate-fade-in-up stagger-1 overflow-hidden rounded-xl border border-teal-200 bg-gradient-to-r from-teal-50 to-emerald-50 p-5 text-center">
+          <p className="text-sm font-semibold text-teal-900">
             We found {scoredMatches.length} great matches for you
+          </p>
+          <p className="mt-0.5 text-xs text-teal-700/70">
+            Apply to all with one click — we&apos;ll arrange interviews
           </p>
           <Button
             onClick={applyToAll}
-            className="mt-2 bg-teal-600 hover:bg-teal-500"
+            className="mt-3 bg-teal-600 shadow-sm shadow-teal-600/20 hover:bg-teal-500 hover:shadow-md"
             size="lg"
           >
             Apply to All ({scoredMatches.length})
@@ -117,32 +129,22 @@ export function Results({
 
       {/* Applied confirmation */}
       {(allApplied || allSent) && (
-        <div className="rounded-lg bg-teal-50 p-6 text-center">
+        <div className="animate-fade-in-up overflow-hidden rounded-xl border border-teal-200 bg-gradient-to-r from-teal-50 to-emerald-50 p-6 text-center">
           <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-teal-100">
-            <svg
-              className="size-6 text-teal-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
+            <svg className="size-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
           <p className="mt-3 font-semibold text-teal-900">Applications sent!</p>
-          <p className="mt-1 text-sm text-teal-700">
+          <p className="mt-1 text-sm text-teal-700/80">
             We&apos;ll arrange interviews and notify you. Sit back and relax.
           </p>
         </div>
       )}
 
-      {/* Match cards with score breakdown */}
+      {/* Match cards */}
       <div className="space-y-3">
-        {scoredMatches.map(({ match, position, breakdown }) => {
+        {scoredMatches.map(({ match, position, breakdown }, i) => {
           if (!position || !breakdown) return null
           const applied = appliedIds.has(match.positionId)
           const expanded = expandedId === match.positionId
@@ -150,58 +152,69 @@ export function Results({
           return (
             <Card
               key={match.positionId}
-              className={applied ? "border-teal-200 bg-teal-50/30" : ""}
+              className={`animate-fade-in-up transition-all ${applied ? "border-teal-200 bg-teal-50/30" : "hover:shadow-md hover:shadow-zinc-200/50"}`}
+              style={{ animationDelay: `${(i + 2) * 0.08}s` }}
             >
               <CardContent className="pt-6">
                 <div className="flex items-start gap-4">
-                  {/* Score */}
+                  {/* Score circle */}
                   <button
                     type="button"
                     onClick={() => setExpandedId(expanded ? null : match.positionId)}
-                    className="flex flex-col items-center pt-1"
+                    className="group relative flex size-14 shrink-0 flex-col items-center justify-center"
                     title="Click to see breakdown"
                   >
-                    <span
-                      className={`text-2xl font-bold ${breakdown.total >= 80 ? "text-teal-600" : breakdown.total >= 60 ? "text-blue-600" : "text-zinc-500"}`}
-                    >
+                    <svg className="absolute inset-0 -rotate-90" viewBox="0 0 56 56">
+                      <circle cx="28" cy="28" r="24" fill="none" stroke="oklch(0.95 0 0)" strokeWidth="3" />
+                      <circle
+                        cx="28"
+                        cy="28"
+                        r="24"
+                        fill="none"
+                        stroke={breakdown.total >= 80 ? "oklch(0.65 0.17 175)" : breakdown.total >= 60 ? "oklch(0.6 0.15 250)" : "oklch(0.6 0 0)"}
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeDasharray={`${(breakdown.total / 100) * 150.8} 150.8`}
+                        className="animate-score-fill"
+                      />
+                    </svg>
+                    <span className={`relative text-lg font-bold ${scoreColor(breakdown.total)}`}>
                       {breakdown.total}
                     </span>
-                    <span className="text-[10px] text-muted-foreground">/100</span>
                   </button>
 
                   {/* Info */}
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <Link
                       href={`/positions/${position.id}`}
-                      className="font-medium hover:text-teal-600 hover:underline"
+                      className="font-semibold transition-colors hover:text-teal-600"
                     >
                       {position.title}
                     </Link>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="mt-0.5 text-sm text-muted-foreground">
                       {position.company} &middot; {position.location}
                     </p>
-                    <div className="mt-1.5 flex flex-wrap gap-1">
-                      {position.stack.map((tech) => (
-                        <Badge
-                          key={tech}
-                          variant={
-                            profile.skills
-                              .map((s) => s.toLowerCase())
-                              .some(
-                                (s) =>
-                                  s.includes(tech.toLowerCase()) ||
-                                  tech.toLowerCase().includes(s)
-                              )
-                              ? "default"
-                              : "secondary"
-                          }
-                          className="text-xs"
-                        >
-                          {tech}
-                        </Badge>
-                      ))}
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {position.stack.map((tech) => {
+                        const isMatch = profile.skills
+                          .map((s) => s.toLowerCase())
+                          .some(
+                            (s) =>
+                              s.includes(tech.toLowerCase()) ||
+                              tech.toLowerCase().includes(s)
+                          )
+                        return (
+                          <Badge
+                            key={tech}
+                            variant={isMatch ? "default" : "secondary"}
+                            className="text-xs"
+                          >
+                            {tech}
+                          </Badge>
+                        )
+                      })}
                     </div>
-                    <p className="mt-2 text-sm text-muted-foreground">
+                    <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
                       {breakdown.summary}
                     </p>
                   </div>
@@ -209,19 +222,9 @@ export function Results({
                   {/* Apply */}
                   <div className="shrink-0">
                     {applied ? (
-                      <span className="inline-flex h-8 items-center gap-1 rounded-md bg-teal-100 px-3 text-sm font-medium text-teal-700">
-                        <svg
-                          className="size-3.5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
+                      <span className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-teal-100 px-3 text-xs font-semibold text-teal-700">
+                        <svg className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                         Applied
                       </span>
@@ -229,6 +232,7 @@ export function Results({
                       <Button
                         size="sm"
                         onClick={() => applyTo(match.positionId)}
+                        className="shadow-sm"
                       >
                         Apply
                       </Button>
@@ -238,7 +242,7 @@ export function Results({
 
                 {/* Expandable breakdown */}
                 {expanded && (
-                  <div className="mt-4 space-y-2 border-t pt-4">
+                  <div className="animate-fade-in mt-4 space-y-2.5 border-t pt-4">
                     {breakdown.dimensions.map((dim) => (
                       <ScoreBar key={dim.name} dimension={dim} />
                     ))}
