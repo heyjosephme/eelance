@@ -48,34 +48,37 @@ export default async function EngineerListingPage(props: {
     .slice(0, 3)
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-6 py-12">
-      <Link
-        href="/engineers"
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
-      >
-        <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-        All engineers
-      </Link>
-
-      {/* Profile */}
-      <Card className="animate-fade-in-up mt-4 overflow-hidden">
-        <div className="h-1 bg-gradient-to-r from-teal-500 to-emerald-400" />
-        <CardHeader>
-          <div className="flex items-center gap-4">
-            <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-teal-100 to-emerald-50 text-xl font-bold text-teal-700">
+    <div>
+      {/* Dark header */}
+      <div className="bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900">
+        <div className="mx-auto max-w-3xl px-6 pb-14 pt-8">
+          <nav className="animate-fade-in-up flex items-center gap-2 text-sm text-zinc-500">
+            <Link href="/engineers" className="transition-colors hover:text-zinc-300">
+              Engineers
+            </Link>
+            <svg className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+            <span className="truncate text-zinc-400">{eng.name}</span>
+          </nav>
+          <div className="animate-fade-in-up mt-5 flex items-center gap-4">
+            <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-teal-400/20 to-emerald-400/20 text-xl font-bold text-teal-400">
               {eng.name.charAt(0)}
             </div>
             <div>
-              <CardTitle className="text-xl">{eng.name}</CardTitle>
-              <p className="text-sm text-muted-foreground">
+              <h1 className="text-xl font-bold text-white">{eng.name}</h1>
+              <p className="mt-0.5 text-sm text-zinc-400">
                 {eng.title} &middot; {eng.yearsOfExperience} years
               </p>
             </div>
           </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
+        </div>
+      </div>
+
+      <div className="mx-auto w-full max-w-3xl px-6 py-8">
+      {/* Profile */}
+      <Card className="animate-fade-in-up -mt-10 overflow-hidden shadow-lg shadow-zinc-200/50">
+        <CardContent className="space-y-6 pt-6">
           {/* Meta grid */}
           <div className="grid grid-cols-2 gap-4 rounded-lg bg-muted/50 p-4 text-sm sm:grid-cols-4">
             <div>
@@ -242,6 +245,7 @@ export default async function EngineerListingPage(props: {
             </Card>
           ))}
         </div>
+      </div>
       </div>
     </div>
   )

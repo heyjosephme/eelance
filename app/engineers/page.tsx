@@ -15,20 +15,21 @@ function formatRate(rate: number) {
 
 export default function EngineersPage() {
   return (
-    <div className="mx-auto w-full max-w-6xl px-6 py-12">
-      <div className="animate-fade-in-up">
-        <span className="text-xs font-medium uppercase tracking-widest text-teal-600">
-          Talent Pool
-        </span>
-        <h1 className="mt-1 text-2xl font-bold tracking-tight">
-          Available Engineers
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {engineerListings.length} engineers ready for freelance/contract work
-        </p>
+    <div>
+      {/* Dark header */}
+      <div className="bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900">
+        <div className="animate-fade-in-up mx-auto max-w-6xl px-6 pb-10 pt-8">
+          <h1 className="text-2xl font-bold tracking-tight text-white">
+            Available Engineers
+          </h1>
+          <p className="mt-1 text-sm text-zinc-400">
+            {engineerListings.length} engineers ready for freelance/contract work
+          </p>
+        </div>
       </div>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mx-auto w-full max-w-6xl px-6 py-6">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {engineerListings.map((eng, i) => (
           <Link key={eng.id} href={`/engineers/${eng.id}`}>
             <Card
@@ -79,6 +80,7 @@ export default function EngineersPage() {
             </Card>
           </Link>
         ))}
+      </div>
       </div>
     </div>
   )

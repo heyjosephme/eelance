@@ -58,20 +58,20 @@ export default async function PositionsPage(props: {
   const pageNumbers = getPageNumbers(page, totalPages)
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-6 py-12">
-      {/* Header */}
-      <div className="animate-fade-in-up">
-        <span className="text-xs font-medium uppercase tracking-widest text-teal-600">
-          Browse
-        </span>
-        <h1 className="mt-1 text-2xl font-bold tracking-tight">
-          Open Positions
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {total} position{total !== 1 && "s"} available
-        </p>
+    <div>
+      {/* Dark header */}
+      <div className="bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900">
+        <div className="animate-fade-in-up mx-auto max-w-6xl px-6 pb-10 pt-8">
+          <h1 className="text-2xl font-bold tracking-tight text-white">
+            Open Positions
+          </h1>
+          <p className="mt-1 text-sm text-zinc-400">
+            {total} position{total !== 1 && "s"} available
+          </p>
+        </div>
       </div>
 
+      <div className="mx-auto w-full max-w-6xl px-6 py-6">
       {/* Filters */}
       <PositionFilters
         stack={searchParams.stack}
@@ -190,6 +190,7 @@ export default async function PositionsPage(props: {
           </div>
         </>
       )}
+      </div>
     </div>
   )
 }
