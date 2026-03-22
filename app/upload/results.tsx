@@ -56,6 +56,9 @@ export function Results({
   const [appliedIds, setAppliedIds] = useState<Set<string>>(new Set())
   const [allSent, setAllSent] = useState(false)
   const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [minScore, setMinScore] = useState(0)
+  const [locationFilter, setLocationFilter] = useState("all")
+  const [sortBy, setSortBy] = useState<"score" | "rate">("score")
 
   // Save profile to localStorage on mount
   useEffect(() => {
@@ -95,20 +98,35 @@ export function Results({
   const allApplied =
     matches.length > 0 && matches.every((m) => appliedIds.has(m.positionId))
 
-  const scoredMatches = matches.map((match) => {
-    const position = getPosition(match.positionId)
-    if (!position) return { match, position: null, breakdown: null }
-    const breakdown = scorePositionForEngineer(
-      {
-        skills: profile.skills,
-        rateMin: 600000,
-        rateMax: 1000000,
-        location: "anywhere",
-      },
-      position
+  const scoredMatches = matches
+    .map((match) => {
+      const position = getPosition(match.positionId)
+      if (!position) return { match, position: null, breakdown: null }
+      const breakdown = scorePositionForEngineer(
+        {
+          skills: profile.skills,
+          rateMin: 600000,
+          rateMax: 1000000,
+          location: "anywhere",
+        },
+        position
+      )
+      return { match: { ...match, score: breakdown.total, reason: breakdown.summary }, position, breakdown }
+    })
+    .filter((s) => s.position && s.breakdown)
+
+  // Collect unique locations for filter
+  const locations = [...new Set(scoredMatches.map((s) => s.position!.location))]
+
+  // Apply filters
+  const filteredMatches = scoredMatches
+    .filter((s) => s.breakdown!.total >= minScore)
+    .filter((s) => locationFilter === "all" || s.position!.location === locationFilter)
+    .sort((a, b) =>
+      sortBy === "score"
+        ? b.breakdown!.total - a.breakdown!.total
+        : b.position!.rateMax - a.position!.rateMax
     )
-    return { match: { ...match, score: breakdown.total, reason: breakdown.summary }, position, breakdown }
-  })
 
   return (
     <div className="space-y-6">
@@ -137,7 +155,7 @@ export function Results({
       {!allApplied && !allSent && (
         <div className="animate-fade-in-up stagger-1 overflow-hidden rounded-xl border border-teal-200 bg-gradient-to-r from-teal-50 to-emerald-50 p-5 text-center">
           <p className="text-sm font-semibold text-teal-900">
-            We found {scoredMatches.length} great matches for you
+            We found {matches.length} great matches for you
           </p>
           <p className="mt-0.5 text-xs text-teal-700/70">
             Apply to all with one click — we&apos;ll arrange interviews
@@ -147,7 +165,7 @@ export function Results({
             className="mt-3 bg-teal-600 shadow-sm shadow-teal-600/20 hover:bg-teal-500 hover:shadow-md"
             size="lg"
           >
-            Apply to All ({scoredMatches.length})
+            Apply to All ({filteredMatches.length})
           </Button>
         </div>
       )}
@@ -184,9 +202,60 @@ export function Results({
         </div>
       )}
 
+      {/* Filters */}
+      <div className="animate-fade-in-up stagger-2 flex flex-wrap items-center gap-3 rounded-lg border border-border bg-white p-3">
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <svg className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+          </svg>
+          Filter
+        </div>
+
+        {/* Min score */}
+        <select
+          value={minScore}
+          onChange={(e) => setMinScore(Number(e.target.value))}
+          className="rounded-md border border-border bg-background px-2.5 py-1.5 text-xs outline-none focus:border-teal-500"
+        >
+          <option value={0}>All scores</option>
+          <option value={60}>60+ score</option>
+          <option value={70}>70+ score</option>
+          <option value={80}>80+ score</option>
+        </select>
+
+        {/* Location */}
+        <select
+          value={locationFilter}
+          onChange={(e) => setLocationFilter(e.target.value)}
+          className="rounded-md border border-border bg-background px-2.5 py-1.5 text-xs capitalize outline-none focus:border-teal-500"
+        >
+          <option value="all">All locations</option>
+          {locations.map((loc) => (
+            <option key={loc} value={loc}>
+              {loc}
+            </option>
+          ))}
+        </select>
+
+        {/* Sort */}
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value as "score" | "rate")}
+          className="rounded-md border border-border bg-background px-2.5 py-1.5 text-xs outline-none focus:border-teal-500"
+        >
+          <option value="score">Sort by match score</option>
+          <option value="rate">Sort by rate (high→low)</option>
+        </select>
+
+        {/* Result count */}
+        <span className="ml-auto text-xs text-muted-foreground">
+          {filteredMatches.length} of {scoredMatches.length} positions
+        </span>
+      </div>
+
       {/* Match cards */}
       <div className="space-y-3">
-        {scoredMatches.map(({ match, position, breakdown }, i) => {
+        {filteredMatches.map(({ match, position, breakdown }, i) => {
           if (!position || !breakdown) return null
           const applied = appliedIds.has(match.positionId)
           const expanded = expandedId === match.positionId

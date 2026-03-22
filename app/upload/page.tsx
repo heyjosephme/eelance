@@ -60,12 +60,12 @@ export default function UploadPage() {
                   </div>
                   <p className="mt-4 font-semibold">Upload Resume</p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    PDF, DOCX, or TXT
+                    PDF, DOCX, TXT, or MD
                   </p>
                 </div>
                 <input
                   type="file"
-                  accept=".pdf,.docx,.doc,.txt"
+                  accept=".pdf,.docx,.doc,.txt,.md"
                   className="hidden"
                   onChange={handleFileChange}
                 />
