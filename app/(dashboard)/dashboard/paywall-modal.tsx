@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
-import { getRevenueCat, checkProEntitlement } from "@/lib/revenuecat"
+import { useEffect, useState } from "react"
+import { getRevenueCat } from "@/lib/revenuecat"
 import { setSubscription } from "@/lib/profile-store"
 
 export function PaywallModal({
@@ -11,51 +11,14 @@ export function PaywallModal({
   onClose: () => void
   onSubscribed: () => void
 }) {
-  const paywallRef = useRef<HTMLDivElement>(null)
-  const [mode, setMode] = useState<"loading" | "rc-paywall" | "fallback">("loading")
+  const [mode, setMode] = useState<"loading" | "fallback">("loading")
   const [processing, setProcessing] = useState(false)
   const [done, setDone] = useState(false)
 
   useEffect(() => {
-    const rc = getRevenueCat()
-    if (!rc) {
-      // No API key — use fallback UI
-      setMode("fallback")
-      return
-    }
-
-    // Use RevenueCat's built-in paywall
-    setMode("rc-paywall")
-
-    async function showRCPaywall() {
-      const rc = getRevenueCat()
-      if (!rc || !paywallRef.current) return
-
-      try {
-        const result = await rc.presentPaywall({
-          htmlTarget: paywallRef.current,
-        })
-        // Purchase succeeded
-        setSubscription("pro")
-        onSubscribed()
-      } catch (e: unknown) {
-        const err = e as { errorCode?: number }
-        // User cancelled or error
-        if (err.errorCode === 1) {
-          // UserCancelledError
-          onClose()
-        } else {
-          console.error("[RevenueCat] Paywall error:", e)
-          // Fall back to custom UI
-          setMode("fallback")
-        }
-      }
-    }
-
-    // Small delay to let ref mount
-    const timer = setTimeout(showRCPaywall, 100)
-    return () => clearTimeout(timer)
-  }, [onClose, onSubscribed])
+    // Always use our custom paywall UI — rc.purchase() handles real billing
+    setMode("fallback")
+  }, [])
 
   async function handleFallbackSubscribe() {
     setProcessing(true)
@@ -69,13 +32,12 @@ export function PaywallModal({
           offerings?.current?.monthly ??
           offerings?.current?.availablePackages?.[0]
         if (pkg) {
-          const result = await rc.purchase({ rcPackage: pkg })
-          if ("pro" in result.customerInfo.entitlements.active) {
-            setSubscription("pro")
-            setDone(true)
-            setTimeout(onSubscribed, 1200)
-            return
-          }
+          await rc.purchase({ rcPackage: pkg })
+          // Purchase succeeded
+          setSubscription("pro")
+          setDone(true)
+          setTimeout(onSubscribed, 800)
+          return
         }
       } catch (e: unknown) {
         const err = e as { errorCode?: number }
@@ -88,10 +50,10 @@ export function PaywallModal({
     }
 
     // Demo fallback — simulate purchase
-    await new Promise((r) => setTimeout(r, 1800))
+    await new Promise((r) => setTimeout(r, 1500))
     setSubscription("pro")
     setDone(true)
-    setTimeout(onSubscribed, 1200)
+    setTimeout(onSubscribed, 800)
   }
 
   return (
@@ -103,25 +65,6 @@ export function PaywallModal({
         onKeyDown={() => {}}
         role="presentation"
       />
-
-      {/* RevenueCat native paywall */}
-      {mode === "rc-paywall" && (
-        <div
-          ref={paywallRef}
-          className="relative z-10 w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl"
-          style={{ minHeight: 400 }}
-        >
-          {/* RC will render its paywall here */}
-          <div className="flex h-64 items-center justify-center">
-            <div className="flex items-center gap-2">
-              <div className="size-5 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-              <span className="text-sm text-muted-foreground">
-                Loading paywall...
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Loading */}
       {mode === "loading" && (
