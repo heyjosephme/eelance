@@ -61,12 +61,12 @@ export default function CompanyDashboard() {
               >
                 Settings
               </button>
-              <button
-                type="button"
+              <Link
+                href="/company/crawl"
                 className="rounded-lg bg-teal-500 px-4 py-2 text-sm font-medium text-white shadow-sm shadow-teal-500/30 transition-colors hover:bg-teal-400"
               >
-                + New Position
-              </button>
+                + Import Position
+              </Link>
             </div>
           </div>
         </div>
